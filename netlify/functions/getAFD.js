@@ -1,5 +1,5 @@
 // Read-only. Renders cached AFD HTML. NEVER calls NWS.
-import { getCached } from '../../lib/cache.js';
+const { getCached } = require('../../lib/cache.cjs');
 
 function escapeHtml(s) { return s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
 function renderHtml(p) {
