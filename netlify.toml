@@ -1,0 +1,10 @@
+[build]
+  publish = "public"
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["node-fetch"]
+
+# If your account supports Scheduled Functions, uncomment:
+# [functions."refreshAFD"]
+#   schedule = "*/10 * * * *"  # every 10 minutes

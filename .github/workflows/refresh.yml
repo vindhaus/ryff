@@ -1,0 +1,13 @@
+name: Refresh AFD Cache
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # every 10 minutes
+  workflow_dispatch: {}
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit refresh for all WFOs from wfos.json
+        run: |
+          curl -sS "https://YOUR_NETLIFY_SITE.netlify.app/.netlify/functions/refreshAFD" -f -o /dev/null
