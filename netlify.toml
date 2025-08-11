@@ -3,7 +3,7 @@
 
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["node-fetch"]
+  included_files = ["lib/**", "netlify/wfos.json"]
 
 # If your account supports Scheduled Functions, uncomment:
 # [functions."refreshAFD"]
