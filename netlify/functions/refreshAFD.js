@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { setCached, getMeta, setMeta } from '../../lib/cache.mjs';
+import { setCached, getMeta, setMeta } from '../../lib/cache.js';
 
 const NWS_UA = process.env.NWS_USER_AGENT || 'RYFF/1.0 (no-contact@invalid)';
 
@@ -51,7 +51,7 @@ async function refreshOne(office) {
   return { office: off, updated: true };
 }
 
-export async function handler() {
+exports.handler = async (event, context) => {
   try {
     const offices = loadWFOs();
     if (!offices.length) return { statusCode: 400, body: 'No offices in netlify/wfos.json' };
