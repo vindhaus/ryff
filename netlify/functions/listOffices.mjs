@@ -1,5 +1,5 @@
 // Lists cached offices for the dropdown.
-import { listCachedOffices } from '../../lib/cache.js';
+import { listCachedOffices } from '../../lib/cache.mjs';
 
 export async function handler() {
   try {
