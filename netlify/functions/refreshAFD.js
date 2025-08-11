@@ -10,7 +10,6 @@ const NWS_UA = process.env.NWS_USER_AGENT || 'RYFF/1.0 (no-contact@invalid)';
 
 // Resolve a file that you’ve marked in netlify.toml -> [functions] included_files
 function resolveProjectPath(...parts) {
-  // On Netlify (AWS Lambda) this is set; locally fallback to cwd
   const base = process.env.LAMBDA_TASK_ROOT || process.cwd();
   return path.join(base, ...parts);
 }
@@ -19,17 +18,14 @@ function resolveProjectPath(...parts) {
 function loadWFOs() {
   const fromEnv = (process.env.OFFICES || '')
     .split(',')
-    .map(s => s.trim().toUpperCase())
+    .map((s) => s.trim().toUpperCase())
     .filter(Boolean);
 
-  // If you’ve added `included_files = ["netlify/wfos.json"]` in netlify.toml,
-  // this path will work in production.
   const jsonPath = resolveProjectPath('netlify', 'wfos.json');
-
   try {
     if (fs.existsSync(jsonPath)) {
       const arr = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-      const fromFile = (Array.isArray(arr) ? arr : []).map(s => String(s).toUpperCase());
+      const fromFile = (Array.isArray(arr) ? arr : []).map((s) => String(s).toUpperCase());
       return fromFile.length ? fromFile : fromEnv;
     }
   } catch {
@@ -40,9 +36,7 @@ function loadWFOs() {
 
 // Minimal fetch helper with conditional headers
 async function nwsJson(url, extraHeaders = {}) {
-  const res = await fetch(url, {
-    headers: { 'User-Agent': NWS_UA, ...extraHeaders }
-  });
+  const res = await fetch(url, { headers: { 'User-Agent': NWS_UA, ...extraHeaders } });
   if (res.status === 304) {
     return { notModified: true, headers: Object.fromEntries(res.headers.entries()) };
   }
@@ -59,7 +53,8 @@ async function refreshOne(office) {
   const off = office.toUpperCase();
   const meta = await getMeta(off); // { lastListModified, lastProductId }
 
-  const listUrl = `https://api.weather.gov/products/types/AFD/locations/${encodeURIComponent(off)}?limit=1`;
+  // Use /products search (supports limit). Newest-first by default.
+  const listUrl = `https://api.weather.gov/products?productType=AFD&locations=${encodeURIComponent(off)}&limit=1`;
   const condHeaders = meta.lastListModified ? { 'If-Modified-Since': meta.lastListModified } : {};
 
   const listResp = await nwsJson(listUrl, condHeaders);
@@ -75,8 +70,7 @@ async function refreshOne(office) {
   }
 
   const latestId = latest.id;
-  const issued =
-    latest?.issuanceTime || latest?.issued || latest?.properties?.issuanceTime;
+  const issued = latest?.issuanceTime || latest?.issued || latest?.properties?.issuanceTime;
 
   if (meta.lastProductId && meta.lastProductId === latestId) {
     if (lastModified) await setMeta(off, { ...meta, lastListModified: lastModified });
@@ -96,7 +90,7 @@ async function refreshOne(office) {
     issued,
     productId: latestId,
     originalText: text,
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
 
   await setCached(off, payload);
@@ -124,7 +118,7 @@ exports.handler = async () => {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ok: true, results })
+      body: JSON.stringify({ ok: true, results }),
     };
   } catch (e) {
     return { statusCode: 500, body: `Error: ${e.message}` };
