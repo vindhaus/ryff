@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "node-fetch": "^3.3.2",
-    "@netlify/blobs": "^6.0.0"
+    "@netlify/blobs": "^7.0.0"
   },
   "devDependencies": {
     "netlify-cli": "^17.0.0"
