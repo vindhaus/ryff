@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { setCached, getMeta, setMeta } from '../../lib/cache.js';
+import { setCached, getMeta, setMeta } from '../../lib/cache.mjs';
 
 const NWS_UA = process.env.NWS_USER_AGENT || 'RYFF/1.0 (no-contact@invalid)';
 
