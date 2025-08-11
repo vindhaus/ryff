@@ -20,9 +20,9 @@
     pre { white-space: pre-wrap; word-wrap: break-word; background:#0f1116; padding:12px; border-radius:12px; border:1px solid #2a2f3a; }
     .muted { color: var(--muted); }
   </style>
-  <script defer src="/turbo.mjs"></script>
-  <script defer src="/stimulus.umd.mjs"></script>
-  <script defer src="/controllers/selection_controller.mjs"></script>
+
+  <!-- Turbo for <turbo-frame> -->
+  <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/dist/turbo.es2017-umd.js" defer></script>
 </head>
 <body>
   <div class="wrap">
@@ -52,5 +52,49 @@
       </div>
     </turbo-frame>
   </div>
+
+  <!-- Stimulus + controller (ESM, inline so no missing files) -->
+  <script type="module">
+    import { Application, Controller } from 'https://unpkg.com/@hotwired/stimulus/dist/stimulus.js';
+
+    class SelectionController extends Controller {
+      static targets = ['officeSelect'];
+
+      connect() {
+        this.populateOffices();
+      }
+
+      async populateOffices() {
+        try {
+          const res = await fetch('/.netlify/functions/listOffices');
+          if (!res.ok) throw new Error(await res.text());
+          const { offices } = await res.json();
+          const sel = this.officeSelectTarget;
+          sel.innerHTML = '';
+          (offices || []).forEach(off => {
+            const opt = document.createElement('option');
+            opt.value = off; opt.textContent = off;
+            sel.appendChild(opt);
+          });
+          // Auto-load first option if present
+          if (sel.options.length > 0) this.loadSelected();
+        } catch (e) {
+          console.error(e);
+          alert('Failed to load offices: ' + e.message);
+        }
+      }
+
+      loadSelected() {
+        const office = this.officeSelectTarget?.value;
+        if (!office) { alert('No office selected'); return; }
+        const frame = document.getElementById('afd_frame');
+        if (!frame) { alert('Missing <turbo-frame id="afd_frame">'); return; }
+        frame.setAttribute('src', `/.netlify/functions/getAFD?office=${encodeURIComponent(office)}`);
+      }
+    }
+
+    const app = Application.start();
+    app.register('selection', SelectionController);
+  </script>
 </body>
 </html>
