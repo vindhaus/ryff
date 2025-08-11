@@ -1,5 +1,5 @@
 // Read-only. Renders cached AFD HTML. NEVER calls NWS.
-import { getCached } from '../../lib/cache.mjs';
+import { getCached } from '../../lib/cache.js';
 
 function escapeHtml(s) { return s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
 function renderHtml(p) {
@@ -18,7 +18,7 @@ function renderHtml(p) {
 </div>`;
 }
 
-export async function handler(event) {
+exports.handler = async (event, context) => {
   try {
     const office = String(event.queryStringParameters?.office || '').toUpperCase();
     if (!office) return { statusCode: 400, body: 'office query param is required' };
