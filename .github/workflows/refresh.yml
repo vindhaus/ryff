@@ -10,4 +10,4 @@ jobs:
     steps:
       - name: Hit refresh for all WFOs from wfos.json
         run: |
-          curl -sS "https://YOUR_NETLIFY_SITE.netlify.app/.netlify/functions/refreshAFD" -f -o /dev/null
+          curl -sS "https://readyourfuckingforecast.netlify.app/.netlify/functions/refreshAFD" -f -o /dev/null
