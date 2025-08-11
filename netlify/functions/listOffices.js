@@ -1,5 +1,5 @@
 // Lists cached offices for the dropdown.
-import { listCachedOffices } from '../../lib/cache.js';
+const { listCachedOffices } = require('../../lib/cache.cjs');
 
 exports.handler = async (event, context) => {
   try {
